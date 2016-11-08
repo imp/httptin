@@ -1,0 +1,9 @@
+[package]
+authors = ["Cyril Plisko <cyril.plisko@mountall.com>"]
+description = "httpbin like utility rewrite in Rust"
+homepage = "https://gitlab.com/imp/httptin"
+keywords = ["httpbin", "http"]
+license = "MIT/Apache-2.0"
+name = "httptin"
+repository = "https://gitlab.com/imp/httptin.git"
+version = "0.1.0"
