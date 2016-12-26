@@ -38,23 +38,11 @@ fn get() -> String {
     String::from("method")
 }
 
-fn main() {
-    rocket::ignite().mount("/", routes![index, origin, get]).launch();
+#[get("/status/<status>")]
+pub fn status(status: String) -> String {
+    format!("<!DOCTYPE html><html><title>HTTPTIN></title><body>Status: {} (FIX ME)</body></html>", status)
 }
 
-// fn get(req: &mut Request) -> PencilResult {
-//     let mut data = BTreeMap::new();
-//     // data.insert("args", format!("{:?}", req.args().listiter().collect::<Vec<_>>()));
-//     data.insert("ip", format!("{}", req.remote_addr().ip()));
-//     if let Some(endpoint) = req.endpoint() {
-//         data.insert("endpoint", endpoint);
-//     }
-//     data.insert("url", req.url());
-//
-//     let mut args = BTreeMap::new();
-//     for (key, value) in req.args().listiter() {
-//         args.insert(key, format!("{:?}", value));
-//     }
-//     data.insert("args", format!("{:?}", args));
-//     jsonify(&data)
-// }
+fn main() {
+    rocket::ignite().mount("/", routes![index, origin, get, status]).launch();
+}
