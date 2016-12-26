@@ -24,8 +24,13 @@ impl fmt::Display for IndexData {
 }
 
 #[get("/")]
-fn index(data: IndexData) -> String {
-    format!("<!DOCTYPE html><html><title>HTTPTIN></title><body>{}</body></html>", data)
+fn index() -> &'static str {
+    "<!DOCTYPE html><html><head><title>HTTPTIN></title></head><body>{}</body></html>"
+}
+
+#[get("/test")]
+fn test(data: IndexData) -> String {
+    format!("<!DOCTYPE html><html><head><title>HTTPTIN></title></head><body>{}</body></html>", data)
 }
 
 #[get("/ip")]
@@ -39,10 +44,10 @@ fn get() -> String {
 }
 
 #[get("/status/<status>")]
-pub fn status(status: String) -> String {
+pub fn status(status: &str) -> String {
     format!("<!DOCTYPE html><html><title>HTTPTIN></title><body>Status: {} (FIX ME)</body></html>", status)
 }
 
 fn main() {
-    rocket::ignite().mount("/", routes![index, origin, get, status]).launch();
+    rocket::ignite().mount("/", routes![index, origin, get, status, test]).launch();
 }
