@@ -25,7 +25,7 @@ impl fmt::Display for IndexData {
 
 #[get("/")]
 fn index(data: IndexData) -> String {
-    format!("<!doctype html><html><title>HTTPTIN></title><body>{}</body></html>", data)
+    format!("<!DOCTYPE html><html><title>HTTPTIN></title><body>{}</body></html>", data)
 }
 
 #[get("/ip")]
