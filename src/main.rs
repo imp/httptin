@@ -25,7 +25,14 @@ impl fmt::Display for IndexData {
 
 #[get("/")]
 fn index() -> &'static str {
-    "<!DOCTYPE html><html><head><title>HTTPTIN></title></head><body>{}</body></html>"
+    "<!DOCTYPE html>
+    <html>
+        <head>
+            <title>HTTPTIN</title>
+        </head>
+        <body>
+        </body>
+    </html>"
 }
 
 #[get("/test")]
