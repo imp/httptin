@@ -1,33 +1,60 @@
-extern crate pencil;
+#![feature(plugin)]
+#![plugin(rocket_codegen)]
 
-use std::collections::BTreeMap;
-use pencil::Pencil;
-use pencil::{Request, PencilResult, Response, jsonify};
-use pencil::method::Get;
+extern crate rocket;
 
-fn index(req: &mut Request) -> PencilResult {
-    let text = format!("<!doctype html><html><title>HTTPTIN></title><body>{:#?} {:?}</body></html>",
-                       req.remote_addr,
-                       req.headers);
-    Ok(Response::from(text))
+use std::fmt;
+
+use rocket::Outcome;
+use rocket::request::{self, Request, FromRequest};
+
+struct IndexData(String);
+
+impl<'a, 'r> FromRequest<'a, 'r> for IndexData {
+    type Error = ();
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<IndexData, ()> {
+        Outcome::Success(IndexData(format!("{}", request)))
+    }
 }
 
-fn get(req: &mut Request) -> PencilResult {
-    let mut data = BTreeMap::new();
-    // data.insert("args", format!("{:?}", req.args()));
-    data.insert("ip", format!("{}", req.remote_addr().ip()));
-    if let Some(endpoint) = req.endpoint() {
-        data.insert("endpoint", endpoint);
+impl fmt::Display for IndexData {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)
     }
-    data.insert("url", req.url());
-    jsonify(&data)
+}
+
+#[get("/")]
+fn index(data: IndexData) -> String {
+    format!("<!doctype html><html><title>HTTPTIN></title><body>{}</body></html>", data)
+}
+
+#[get("/ip")]
+fn origin() -> String {
+    String::from("Remote address decoding is not implemented yet")
+}
+
+#[get("/get")]
+fn get() -> String {
+    String::from("method")
 }
 
 fn main() {
-    let addr = "127.0.0.1:5000";
-    let mut app = Pencil::new("httptin");
-    app.route("/", &[Get], "index", index);
-    app.route("/get", &[Get], "get", get);
-    println!("Listening on {}", addr);
-    app.run(addr);
+    rocket::ignite().mount("/", routes![index, origin, get]).launch();
 }
+
+// fn get(req: &mut Request) -> PencilResult {
+//     let mut data = BTreeMap::new();
+//     // data.insert("args", format!("{:?}", req.args().listiter().collect::<Vec<_>>()));
+//     data.insert("ip", format!("{}", req.remote_addr().ip()));
+//     if let Some(endpoint) = req.endpoint() {
+//         data.insert("endpoint", endpoint);
+//     }
+//     data.insert("url", req.url());
+//
+//     let mut args = BTreeMap::new();
+//     for (key, value) in req.args().listiter() {
+//         args.insert(key, format!("{:?}", value));
+//     }
+//     data.insert("args", format!("{:?}", args));
+//     jsonify(&data)
+// }
