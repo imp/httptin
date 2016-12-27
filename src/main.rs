@@ -53,9 +53,9 @@ fn get() -> String {
     String::from("method")
 }
 
-#[get("/status/<status>")]
-pub fn status(status: &str) -> String {
-    format!("<!DOCTYPE html><html><title>HTTPTIN></title><body>Status: {} (FIX ME)</body></html>", status)
+#[get("/status/<code>")]
+pub fn status<'r>(code: u16) -> Response<'r> {
+    Response::build().status(Status::raw(code)).finalize()
 }
 
 fn main() {
