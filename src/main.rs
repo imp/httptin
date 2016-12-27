@@ -1,3 +1,4 @@
+#![feature(custom_derive)]
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
 
@@ -48,9 +49,15 @@ fn origin() -> String {
     String::from("Remote address decoding is not implemented yet")
 }
 
+#[derive(Serialize)]
+struct GetData {
+    args: String,
+    headers: String,
+}
+
 #[get("/get")]
-fn get() -> String {
-    String::from("method")
+fn get() -> content::JSON<&'static str> {
+    content::JSON("{agrs: {}}")
 }
 
 #[get("/status/<code>")]
