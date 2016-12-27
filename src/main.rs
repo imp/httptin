@@ -5,8 +5,10 @@ extern crate rocket;
 
 use std::fmt;
 
-use rocket::Outcome;
+use rocket::http::Status;
 use rocket::request::{self, Request, FromRequest};
+use rocket::response::content;
+use rocket::{Outcome, Response};
 
 struct IndexData(String);
 
