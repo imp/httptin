@@ -24,15 +24,16 @@ impl fmt::Display for IndexData {
 }
 
 #[get("/")]
-fn index() -> &'static str {
-    "<!DOCTYPE html>
+fn index() -> content::HTML<&'static str> {
+    content::HTML("<!DOCTYPE html>
     <html>
         <head>
             <title>HTTPTIN</title>
         </head>
         <body>
+        <h1>HTTPTIN - HTTP tester in Rust and Rocket</h1>
         </body>
-    </html>"
+    </html>")
 }
 
 #[get("/test")]
