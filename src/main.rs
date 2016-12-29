@@ -40,8 +40,15 @@ fn index() -> content::HTML<&'static str> {
 }
 
 #[get("/test")]
-fn test(data: IndexData) -> String {
-    format!("<!DOCTYPE html><html><head><title>HTTPTIN></title></head><body>{}</body></html>", data)
+fn test(data: IndexData) -> content::HTML<String> {
+    content::HTML(format!("<!DOCTYPE html>
+    <html>
+        <head>
+            <title>HTTPTIN></title>
+        </head>
+        <body>{}</body>
+    </html>",
+                          data))
 }
 
 #[get("/ip")]
