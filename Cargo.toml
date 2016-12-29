@@ -9,5 +9,4 @@ repository = "https://gitlab.com/imp/httptin.git"
 version = "0.1.0"
 
 [dependencies]
-rocket = "0.1"
-rocket_codegen = "0.1"
+hyper = "0.9"

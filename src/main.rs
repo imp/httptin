@@ -1,77 +1,28 @@
-#![feature(custom_derive)]
-#![feature(plugin)]
-#![plugin(rocket_codegen)]
+extern crate hyper;
 
-extern crate rocket;
+mod get;
+mod post;
 
-use std::fmt;
+use hyper::{Get, Head, Post, Delete};
+use hyper::server::{Handler, Server, Request, Response};
+use hyper::status::StatusCode;
 
-use rocket::http::Status;
-use rocket::request::{self, Request, FromRequest};
-use rocket::response::content;
-use rocket::{Outcome, Response};
+struct HttpTin;
 
-struct IndexData(String);
-
-impl<'a, 'r> FromRequest<'a, 'r> for IndexData {
-    type Error = ();
-    fn from_request(request: &'a Request<'r>) -> request::Outcome<IndexData, ()> {
-        Outcome::Success(IndexData(format!("{}", request)))
+impl Handler for HttpTin {
+    fn handle(&self, request: Request, mut response: Response) {
+        println!("{} {} {}", request.remote_addr, request.method, request.uri);
+        match request.method {
+            Get => get::get(request, response),
+            Post => post::post(request, response),
+             _ => *response.status_mut() = StatusCode::MethodNotAllowed,
+        }
     }
-}
-
-impl fmt::Display for IndexData {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.0)
-    }
-}
-
-#[get("/")]
-fn index() -> content::HTML<&'static str> {
-    content::HTML("<!DOCTYPE html>
-    <html>
-        <head>
-            <title>HTTPTIN</title>
-        </head>
-        <body>
-        <h1>HTTPTIN - HTTP tester in Rust and Rocket</h1>
-        </body>
-    </html>")
-}
-
-#[get("/test")]
-fn test(data: IndexData) -> content::HTML<String> {
-    content::HTML(format!("<!DOCTYPE html>
-    <html>
-        <head>
-            <title>HTTPTIN></title>
-        </head>
-        <body>{}</body>
-    </html>",
-                          data))
-}
-
-#[get("/ip")]
-fn origin() -> String {
-    String::from("Remote address decoding is not implemented yet")
-}
-
-#[derive(Serialize)]
-struct GetData {
-    args: String,
-    headers: String,
-}
-
-#[get("/get")]
-fn get() -> content::JSON<&'static str> {
-    content::JSON("{agrs: {}}")
-}
-
-#[get("/status/<code>")]
-pub fn status<'r>(code: u16) -> Response<'r> {
-    Response::build().status(Status::raw(code)).finalize()
 }
 
 fn main() {
-    rocket::ignite().mount("/", routes![index, origin, get, status, test]).launch();
+    let server = Server::http("::1:8000").unwrap();
+    // println!("Server {:?}", server);
+    let active = server.handle(HttpTin {}).unwrap();
+    println!("Active {:?}", active.socket);
 }
