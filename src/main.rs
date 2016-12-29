@@ -3,7 +3,7 @@ extern crate hyper;
 mod get;
 mod post;
 
-use hyper::{Get, Head, Post, Delete};
+use hyper::{Get, Post};
 use hyper::server::{Handler, Server, Request, Response};
 use hyper::status::StatusCode;
 
