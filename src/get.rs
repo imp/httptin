@@ -1,7 +1,5 @@
-use std::fmt;
 use hyper::server::{Request, Response};
 
-//#[get("/get")]
 pub fn get(request: Request, mut response: Response) {
     let (remote_addr, _, headers, uri, version, payload) = request.deconstruct();
     println!("**  Handling GET {}", uri);
