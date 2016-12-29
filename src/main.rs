@@ -31,7 +31,7 @@ impl Handler for HttpTin {
         match request.method {
             Get => get::get(request, response),
             Post => post::post(request, response),
-             _ => *response.status_mut() = StatusCode::MethodNotAllowed,
+            _ => *response.status_mut() = StatusCode::MethodNotAllowed,
         }
     }
 }
