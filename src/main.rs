@@ -38,7 +38,7 @@ impl Handler for HttpTin {
 
 fn main() {
     let server = Server::http("::1:8000").unwrap();
-    // println!("Server {:?}", server);
-    let active = server.handle(HttpTin::new()).unwrap();
-    println!("Active {:?}", active.socket);
+    if let Ok(active) = server.handle(HttpTin::new()) {
+        println!("Listening on {:?}", active.socket);
+    }
 }
