@@ -1,5 +1,6 @@
 use hyper::server::{Request, Response};
 
 pub fn post(request: Request, mut response: Response) {
-    let (remote_addr, _, headers, uri, version, payload) = request.deconstruct();
+    println!("** Handling POST {} from {}", request.uri, request.remote_addr);
+    println!("** Incoming headers {:?}", request.headers);
 }
