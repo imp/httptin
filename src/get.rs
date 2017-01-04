@@ -12,7 +12,6 @@ macro_rules! dispatch {
 }
 
 pub fn get(request: Request, mut response: Response) {
-    // let (remote_addr, _, headers, uri, version, payload) = request.deconstruct();
     println!("** Handling GET {}", request.uri);
     println!("** Incoming headers {:?}", request.headers);
     if let RequestUri::AbsolutePath(ref path) = request.uri {
@@ -75,13 +74,3 @@ fn test(request: &Request, mut response: Response) {
     response.headers_mut().set(ContentLength(text.len() as u64));
     response.start().unwrap().write(text.as_bytes());
 }
-
-struct GetData {
-    args: String,
-    headers: String,
-}
-
-// //#[get("/status/<code>")]
-// pub fn status<'r>(code: u16) -> Response<'r> {
-//     Response::build().status(Status::raw(code)).finalize()
-// }
