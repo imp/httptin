@@ -26,6 +26,12 @@ trait ToResponse {
     fn content(&self) -> &[u8] {
         &[]
     }
+
+    fn make_response(&self, mut response: Response) {
+        response.headers_mut().set(self.content_type());
+        response.headers_mut().set(self.content_length());
+        response.start().unwrap().write(self.content()).unwrap();
+    }
 }
 
 impl ToResponse for StatusCode {
@@ -53,17 +59,17 @@ pub fn get(request: Request, response: Response) {
     println!("** Incoming headers {:?}", request.headers);
     if let RequestUri::AbsolutePath(ref path) = request.uri {
         dispatch![
-            path == "/" => index(&request, response),
-            path == "/ip" => origin(&request, response),
-            path.starts_with("/status/") => status(path, response),
-            path.starts_with("/test") => test(&request, response),
-            true => notfound404(response),
+            path == "/" => index(&request).make_response(response),
+            path == "/ip" => origin(&request).make_response(response),
+            path.starts_with("/status/") => status(path).make_response(response),
+            path.starts_with("/test") => test(&request).make_response(response),
+            true => notfound404().make_response(response),
         ];
     }
 }
 
-fn notfound404(mut response: Response) {
-    let text = "<!DOCTYPE html>
+fn notfound404() -> String {
+    String::from("<!DOCTYPE html>
     <html>
         <head>
             <title>404 Not Found</title>
@@ -73,15 +79,11 @@ fn notfound404(mut response: Response) {
         <p>The requested URL was not found on the server.
         If you entered the URL manually please check your spelling and try again.</p>
         </body>
-    </html>";
-
-    response.headers_mut().set(ContentType::html());
-    response.headers_mut().set(ContentLength(text.len() as u64));
-    response.start().unwrap().write(text.as_bytes()).unwrap();
+    </html>")
 }
 
-fn index(request: &Request, mut response: Response) {
-    let index = "<!DOCTYPE html>
+fn index(request: &Request) -> String {
+    String::from("<!DOCTYPE html>
     <html>
         <head>
             <link
@@ -92,33 +94,25 @@ fn index(request: &Request, mut response: Response) {
         <body>
         <h1>HTTPTIN - HTTP tester in Rust and Rocket</h1>
         </body>
-    </html>";
-
-    response.headers_mut().set(ContentType::html());
-    response.headers_mut().set(ContentLength(index.len() as u64));
-    response.start().unwrap().write(index.as_bytes()).unwrap();
+    </html>")
 }
 
-fn status(path: &str, mut response: Response) {
+fn status(path: &str) -> StatusCode {
     // /status/xx
     // 0123456789
     let (_, param) = path.split_at(8);
-    let code = match param.parse::<u16>() {
+    match param.parse::<u16>() {
         Ok(status) => StatusCode::from_u16(status),
         Err(_) => StatusCode::BadRequest,
-    };
-    *response.status_mut() = code;
+    }
 }
 
-fn origin(request: &Request, mut response: Response) {
-    let text = "Remote address decoding is not implemented yet";
-    response.headers_mut().set(ContentType::plaintext());
-    response.headers_mut().set(ContentLength(text.len() as u64));
-    response.start().unwrap().write(text.as_bytes()).unwrap();
+fn origin(request: &Request) -> String {
+    String::from("Remote address decoding is not implemented yet")
 }
 
-fn test(request: &Request, mut response: Response) {
-    let text = format!("<!DOCTYPE html>
+fn test(request: &Request) -> String {
+    format!("<!DOCTYPE html>
     <html>
         <head>
             <title>HTTPTIN TEST</title>
@@ -131,12 +125,9 @@ fn test(request: &Request, mut response: Response) {
             URI: {}<br>
         </body>
     </html>",
-                       request.remote_addr,
-                       request.method,
-                       request.version,
-                       request.headers,
-                       request.uri);
-    response.headers_mut().set(ContentType::html());
-    response.headers_mut().set(ContentLength(text.len() as u64));
-    response.start().unwrap().write(text.as_bytes()).unwrap();
+            request.remote_addr,
+            request.method,
+            request.version,
+            request.headers,
+            request.uri)
 }
