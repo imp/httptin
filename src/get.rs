@@ -43,7 +43,6 @@ fn status(path: &str, mut response: Response) {
     // /status/xx
     // 0123456789
     let (_, param) = path.split_at(8);
-    println!("Status {:?}", param);
     let code = match param.parse::<u16>() {
         Ok(status) => StatusCode::from_u16(status),
         Err(_) => StatusCode::BadRequest,
