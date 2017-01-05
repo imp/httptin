@@ -10,6 +10,44 @@ macro_rules! dispatch {
     }}
 }
 
+trait ToResponse {
+    fn status(&self) -> StatusCode {
+        StatusCode::Ok
+    }
+
+    fn content_type(&self) -> ContentType {
+        ContentType::plaintext()
+    }
+
+    fn content_length(&self) -> ContentLength {
+        ContentLength(0)
+    }
+
+    fn content(&self) -> &[u8] {
+        &[]
+    }
+}
+
+impl ToResponse for StatusCode {
+    fn status(&self) -> StatusCode {
+        *self
+    }
+}
+
+impl ToResponse for String {
+    fn content_type(&self) -> ContentType {
+        ContentType::html()
+    }
+
+    fn content_length(&self) -> ContentLength {
+        ContentLength(self.as_bytes().len() as u64)
+    }
+
+    fn content(&self) -> &[u8] {
+        self.as_bytes()
+    }
+}
+
 pub fn get(request: Request, mut response: Response) {
     println!("** Handling GET {}", request.uri);
     println!("** Incoming headers {:?}", request.headers);
