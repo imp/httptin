@@ -59,7 +59,7 @@ pub fn get(request: Request, response: Response) {
     println!("** Incoming headers {:?}", request.headers);
     if let RequestUri::AbsolutePath(ref path) = request.uri {
         dispatch![
-            path == "/" => index(&request).make_response(response),
+            path == "/" => index().make_response(response),
             path == "/ip" => origin(&request).make_response(response),
             path.starts_with("/status/") => status(path).make_response(response),
             path.starts_with("/test") => test(&request).make_response(response),
@@ -98,7 +98,7 @@ fn notfound404() -> String {
     </html>")
 }
 
-fn index(request: &Request) -> String {
+fn index() -> String {
     String::from("<!DOCTYPE html>
     <html>
         <head>
