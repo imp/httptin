@@ -10,7 +10,7 @@ macro_rules! dispatch {
     }}
 }
 
-trait ToResponse {
+trait MakeResponse {
     fn status(&self) -> StatusCode {
         StatusCode::Ok
     }
@@ -34,13 +34,13 @@ trait ToResponse {
     }
 }
 
-impl ToResponse for StatusCode {
+impl MakeResponse for StatusCode {
     fn status(&self) -> StatusCode {
         *self
     }
 }
 
-impl ToResponse for String {
+impl MakeResponse for String {
     fn content_type(&self) -> ContentType {
         ContentType::html()
     }
@@ -70,7 +70,7 @@ pub fn get(request: Request, response: Response) {
 
 struct Text(String);
 
-impl ToResponse for Text {
+impl MakeResponse for Text {
     fn content_type(&self) -> ContentType {
         ContentType::plaintext()
     }
