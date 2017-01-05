@@ -6,8 +6,7 @@ use hyper::uri::RequestUri;
 
 macro_rules! dispatch {
     ($m0:expr => $h0:expr, $($m1:expr => $h1:expr,)*) => {{
-        if $m0 { $h0 }
-        $( else if $m1 { $h1 } )*
+        if $m0 { $h0 } $( else if $m1 { $h1 } )*
     }}
 }
 
