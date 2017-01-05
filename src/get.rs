@@ -19,8 +19,27 @@ pub fn get(request: Request, mut response: Response) {
             path == "/ip" => origin(&request, response),
             path.starts_with("/status/") => status(path, response),
             path.starts_with("/test") => test(&request, response),
+            true => notfound404(response),
         ];
     }
+}
+
+fn notfound404(mut response: Response) {
+    let text = "<!DOCTYPE html>
+    <html>
+        <head>
+            <title>404 Not Found</title>
+        </head>
+        <body>
+        <h1>Not Found</h1>
+        <p>The requested URL was not found on the server.
+        If you entered the URL manually please check your spelling and try again.</p>
+        </body>
+    </html>";
+
+    response.headers_mut().set(ContentType::html());
+    response.headers_mut().set(ContentLength(text.len() as u64));
+    response.start().unwrap().write(text.as_bytes()).unwrap();
 }
 
 fn index(request: &Request, mut response: Response) {
