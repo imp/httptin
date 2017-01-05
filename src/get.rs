@@ -68,6 +68,22 @@ pub fn get(request: Request, response: Response) {
     }
 }
 
+struct Text(String);
+
+impl ToResponse for Text {
+    fn content_type(&self) -> ContentType {
+        ContentType::plaintext()
+    }
+
+    fn content_length(&self) -> ContentLength {
+        ContentLength(self.0.as_bytes().len() as u64)
+    }
+
+    fn content(&self) -> &[u8] {
+        self.0.as_bytes()
+    }
+}
+
 fn notfound404() -> String {
     String::from("<!DOCTYPE html>
     <html>
@@ -107,8 +123,8 @@ fn status(path: &str) -> StatusCode {
     }
 }
 
-fn origin(request: &Request) -> String {
-    format!("origin: {}", request.remote_addr)
+fn origin(request: &Request) -> Text {
+    Text(format!("origin: {}", request.remote_addr))
 }
 
 fn test(request: &Request) -> String {
