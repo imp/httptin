@@ -27,6 +27,9 @@ fn index(request: &Request, mut response: Response) {
     let index = "<!DOCTYPE html>
     <html>
         <head>
+            <link
+                rel=\"icon\"
+                href=\"http://investorintel.com/wp-content/uploads/2014/03/tin-can.jpg\"/>
             <title>HTTPTIN</title>
         </head>
         <body>
