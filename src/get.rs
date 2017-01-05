@@ -28,6 +28,7 @@ trait MakeResponse {
     }
 
     fn make_response(&self, mut response: Response) {
+        *response.status_mut() = self.status();
         response.headers_mut().set(self.content_type());
         response.headers_mut().set(self.content_length());
         response.start().unwrap().write(self.content()).unwrap();
