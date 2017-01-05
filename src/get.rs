@@ -17,7 +17,7 @@ pub fn get(request: Request, mut response: Response) {
         dispatch![
             path == "/" => index(&request, response),
             path == "/ip" => origin(&request, response),
-            path.starts_with("/status") => status(&request, response),
+            path.starts_with("/status/") => status(path, response),
             path.starts_with("/test") => test(&request, response),
         ];
     }
@@ -39,8 +39,16 @@ fn index(request: &Request, mut response: Response) {
     response.start().unwrap().write(index.as_bytes()).unwrap();
 }
 
-fn status(request: &Request, mut response: Response) {
-    *response.status_mut() = StatusCode::ImATeapot;
+fn status(path: &str, mut response: Response) {
+    // /status/xx
+    // 0123456789
+    let (_, param) = path.split_at(8);
+    println!("Status {:?}", param);
+    let code = match param.parse::<u16>() {
+        Ok(status) => StatusCode::from_u16(status),
+        Err(_) => StatusCode::BadRequest,
+    };
+    *response.status_mut() = code;
 }
 
 fn origin(request: &Request, mut response: Response) {
