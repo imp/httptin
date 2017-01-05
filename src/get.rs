@@ -108,7 +108,7 @@ fn status(path: &str) -> StatusCode {
 }
 
 fn origin(request: &Request) -> String {
-    String::from("Remote address decoding is not implemented yet")
+    format!("origin: {}", request.remote_addr)
 }
 
 fn test(request: &Request) -> String {
