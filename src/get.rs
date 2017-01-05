@@ -37,7 +37,7 @@ fn index(request: &Request, mut response: Response) {
 
     response.headers_mut().set(ContentType::html());
     response.headers_mut().set(ContentLength(index.len() as u64));
-    response.start().unwrap().write(index.as_bytes());
+    response.start().unwrap().write(index.as_bytes()).unwrap();
 }
 
 fn status(request: &Request, mut response: Response) {
@@ -48,7 +48,7 @@ fn origin(request: &Request, mut response: Response) {
     let text = "Remote address decoding is not implemented yet";
     response.headers_mut().set(ContentType::plaintext());
     response.headers_mut().set(ContentLength(text.len() as u64));
-    response.start().unwrap().write(text.as_bytes());
+    response.start().unwrap().write(text.as_bytes()).unwrap();
 }
 
 fn test(request: &Request, mut response: Response) {
@@ -72,5 +72,5 @@ fn test(request: &Request, mut response: Response) {
                        request.uri);
     response.headers_mut().set(ContentType::html());
     response.headers_mut().set(ContentLength(text.len() as u64));
-    response.start().unwrap().write(text.as_bytes());
+    response.start().unwrap().write(text.as_bytes()).unwrap();
 }
