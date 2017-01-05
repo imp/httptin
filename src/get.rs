@@ -48,7 +48,7 @@ impl ToResponse for String {
     }
 }
 
-pub fn get(request: Request, mut response: Response) {
+pub fn get(request: Request, response: Response) {
     println!("** Handling GET {}", request.uri);
     println!("** Incoming headers {:?}", request.headers);
     if let RequestUri::AbsolutePath(ref path) = request.uri {
