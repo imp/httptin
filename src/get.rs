@@ -41,9 +41,25 @@ impl MakeResponse for StatusCode {
     }
 }
 
-impl MakeResponse for String {
+struct Html(String);
+
+impl MakeResponse for Html {
     fn content_type(&self) -> ContentType {
         ContentType::html()
+    }
+
+    fn content_length(&self) -> ContentLength {
+        ContentLength(self.0.as_bytes().len() as u64)
+    }
+
+    fn content(&self) -> &[u8] {
+        self.0.as_bytes()
+    }
+}
+
+impl MakeResponse for String {
+    fn content_type(&self) -> ContentType {
+        ContentType::plaintext()
     }
 
     fn content_length(&self) -> ContentLength {
@@ -69,24 +85,8 @@ pub fn get(request: Request, response: Response) {
     }
 }
 
-struct Text(String);
-
-impl MakeResponse for Text {
-    fn content_type(&self) -> ContentType {
-        ContentType::plaintext()
-    }
-
-    fn content_length(&self) -> ContentLength {
-        ContentLength(self.0.as_bytes().len() as u64)
-    }
-
-    fn content(&self) -> &[u8] {
-        self.0.as_bytes()
-    }
-}
-
-fn notfound404() -> String {
-    String::from("<!DOCTYPE html>
+fn notfound404() -> Html {
+    Html(String::from("<!DOCTYPE html>
     <html>
         <head>
             <title>404 Not Found</title>
@@ -96,11 +96,11 @@ fn notfound404() -> String {
         <p>The requested URL was not found on the server.
         If you entered the URL manually please check your spelling and try again.</p>
         </body>
-    </html>")
+    </html>"))
 }
 
-fn index() -> String {
-    String::from("<!DOCTYPE html>
+fn index() -> Html {
+    Html(String::from("<!DOCTYPE html>
     <html>
         <head>
             <link
@@ -111,7 +111,7 @@ fn index() -> String {
         <body>
         <h1>HTTPTIN - HTTP tester in Rust and Rocket</h1>
         </body>
-    </html>")
+    </html>"))
 }
 
 fn status(path: &str) -> StatusCode {
@@ -124,12 +124,12 @@ fn status(path: &str) -> StatusCode {
     }
 }
 
-fn origin(request: &Request) -> Text {
-    Text(format!("origin: {}", request.remote_addr))
+fn origin(request: &Request) -> String {
+    format!("origin: {}", request.remote_addr)
 }
 
-fn test(request: &Request) -> String {
-    format!("<!DOCTYPE html>
+fn test(request: &Request) -> Html {
+    Html(format!("<!DOCTYPE html>
     <html>
         <head>
             <title>HTTPTIN TEST</title>
@@ -142,9 +142,9 @@ fn test(request: &Request) -> String {
             URI: {}<br>
         </body>
     </html>",
-            request.remote_addr,
-            request.method,
-            request.version,
-            request.headers,
-            request.uri)
+                 request.remote_addr,
+                 request.method,
+                 request.version,
+                 request.headers,
+                 request.uri))
 }
