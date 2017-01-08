@@ -1,74 +1,13 @@
-use std::io::Write;
-use hyper::header::{ContentLength, ContentType};
 use hyper::server::{Request, Response};
 use hyper::status::StatusCode;
 use hyper::uri::RequestUri;
+
+use makeresponse::{Html, MakeResponse};
 
 macro_rules! dispatch {
     ($m0:expr => $h0:expr, $($m1:expr => $h1:expr,)*) => {{
         if $m0 { $h0 } $( else if $m1 { $h1 } )*
     }}
-}
-
-trait MakeResponse {
-    fn status(&self) -> StatusCode {
-        StatusCode::Ok
-    }
-
-    fn content_type(&self) -> ContentType {
-        ContentType::plaintext()
-    }
-
-    fn content_length(&self) -> ContentLength {
-        ContentLength(0)
-    }
-
-    fn content(&self) -> &[u8] {
-        &[]
-    }
-
-    fn make_response(&self, mut response: Response) {
-        *response.status_mut() = self.status();
-        response.headers_mut().set(self.content_type());
-        response.headers_mut().set(self.content_length());
-        response.start().unwrap().write(self.content()).unwrap();
-    }
-}
-
-impl MakeResponse for StatusCode {
-    fn status(&self) -> StatusCode {
-        *self
-    }
-}
-
-struct Html(String);
-
-impl MakeResponse for Html {
-    fn content_type(&self) -> ContentType {
-        ContentType::html()
-    }
-
-    fn content_length(&self) -> ContentLength {
-        ContentLength(self.0.as_bytes().len() as u64)
-    }
-
-    fn content(&self) -> &[u8] {
-        self.0.as_bytes()
-    }
-}
-
-impl MakeResponse for String {
-    fn content_type(&self) -> ContentType {
-        ContentType::plaintext()
-    }
-
-    fn content_length(&self) -> ContentLength {
-        ContentLength(self.as_bytes().len() as u64)
-    }
-
-    fn content(&self) -> &[u8] {
-        self.as_bytes()
-    }
 }
 
 pub fn get(request: Request, response: Response) {

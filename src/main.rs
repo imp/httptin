@@ -2,6 +2,7 @@ extern crate hyper;
 
 mod get;
 mod post;
+mod makeresponse;
 
 use hyper::{Get, Post};
 use hyper::header;
