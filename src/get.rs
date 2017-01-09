@@ -1,6 +1,7 @@
 use hyper::server::{Request, Response};
 use hyper::status::StatusCode;
 use hyper::uri::RequestUri;
+use serde_json::{Map, Value};
 
 use makeresponse::{Html, MakeResponse};
 
@@ -63,8 +64,18 @@ fn status(path: &str) -> StatusCode {
     }
 }
 
-fn origin(request: &Request) -> String {
-    format!("origin: {}", request.remote_addr)
+fn origin(request: &Request) -> Value {
+    let mut map = Map::new();
+    let ip = Value::String(format!("{}", request.remote_addr.ip()));
+    let port = Value::String(format!("{}", request.remote_addr.port()));
+    let ipv4 = Value::Bool(request.remote_addr.is_ipv4());
+    let ipv6 = Value::Bool(request.remote_addr.is_ipv6());
+    map.insert(String::from("ip"), ip);
+    map.insert(String::from("port"), port);
+    map.insert(String::from("ipv4"), ipv4);
+    map.insert(String::from("ipv6"), ipv6);
+
+    Value::Object(map)
 }
 
 fn test(request: &Request) -> Html {

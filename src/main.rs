@@ -1,3 +1,4 @@
+#![feature(sockaddr_checker)]
 extern crate hyper;
 extern crate serde_json;
 
