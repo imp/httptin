@@ -40,7 +40,7 @@ impl Handler for HttpTin {
 }
 
 fn main() {
-    let server = Server::http("::1:8000").unwrap();
+    let server = Server::http("localhost:8000").unwrap();
     if let Ok(active) = server.handle(HttpTin::new()) {
         println!("Listening on {:?}", active.socket);
     }
