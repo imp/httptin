@@ -1,8 +1,7 @@
-use std::io::Write;
 use hyper::header::{ContentLength, ContentType};
 use hyper::server::Response;
 use hyper::status::StatusCode;
-// use hyper::uri::RequestUri;
+use serde_json::{to_vec_pretty, Value};
 
 pub trait MakeResponse {
     fn status(&self) -> StatusCode {
@@ -63,5 +62,18 @@ impl MakeResponse for String {
 
     fn content(&self) -> &[u8] {
         self.as_bytes()
+    }
+}
+
+impl MakeResponse for Value {
+    fn content_type(&self) -> ContentType {
+        ContentType::json()
+    }
+
+    fn make_response(&self, mut response: Response) {
+        *response.status_mut() = self.status();
+        response.headers_mut().set(self.content_type());
+        let body = to_vec_pretty(self).unwrap_or_else(|_| Vec::new());
+        response.send(&body).unwrap();
     }
 }

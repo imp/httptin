@@ -1,4 +1,5 @@
 extern crate hyper;
+extern crate serde_json;
 
 mod get;
 mod post;

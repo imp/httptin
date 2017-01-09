@@ -10,3 +10,5 @@ version = "0.1.0"
 
 [dependencies]
 hyper = "0.9"
+serde = "0.8.21"
+serde_json = "0.8.4"
