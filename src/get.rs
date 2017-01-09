@@ -18,6 +18,7 @@ pub fn get(request: Request, response: Response) {
         dispatch![
             path == "/" => index().make_response(response),
             path == "/ip" => origin(&request).make_response(response),
+            path == "/headers" => headers(&request).make_response(response),
             path.starts_with("/status/") => status(path).make_response(response),
             path.starts_with("/test") => test(&request).make_response(response),
             true => notfound404().make_response(response),
@@ -74,6 +75,17 @@ fn origin(request: &Request) -> Value {
     map.insert(String::from("port"), port);
     map.insert(String::from("ipv4"), ipv4);
     map.insert(String::from("ipv6"), ipv6);
+
+    Value::Object(map)
+}
+
+fn headers(request: &Request) -> Value {
+    let headers = request.headers
+        .iter()
+        .map(|h| (String::from(h.name()), Value::String(h.value_string())))
+        .collect::<Map<_, _>>();
+    let mut map = Map::new();
+    map.insert(String::from("headers"), Value::Object(headers));
 
     Value::Object(map)
 }
