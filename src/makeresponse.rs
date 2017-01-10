@@ -70,6 +70,10 @@ impl MakeResponse for Value {
         ContentType::json()
     }
 
+    fn content_length(&self) -> ContentLength {
+        to_vec_pretty(self).unwrap_or_else(|_| Vec::new()).len()
+    }
+
     fn make_response(&self, mut response: Response) {
         *response.status_mut() = self.status();
         response.headers_mut().set(self.content_type());
