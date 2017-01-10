@@ -3,7 +3,7 @@ use hyper::status::StatusCode;
 use hyper::uri::RequestUri;
 use serde_json::{Map, Value};
 
-use makeresponse::{Html, MakeResponse};
+use makeresponse::{Html, MakeResponse, ResponseHeaders};
 
 macro_rules! dispatch {
     ($m0:expr => $h0:expr, $($m1:expr => $h1:expr,)*) => {{
@@ -20,6 +20,7 @@ pub fn get(request: Request, response: Response) {
             path == "/ip" => origin(&request).make_response(response),
             path == "/headers" => headers(&request).make_response(response),
             path.starts_with("/status/") => status(path).make_response(response),
+            path.starts_with("/response-headers") => response_headers(path).make_response(response),
             path.starts_with("/test") => test(&request).make_response(response),
             true => notfound404().make_response(response),
         ];
@@ -88,6 +89,13 @@ fn headers(request: &Request) -> Value {
     map.insert(String::from("headers"), Value::Object(headers));
 
     Value::Object(map)
+}
+
+fn response_headers(path: &str) -> ResponseHeaders {
+    let mut headers = Map::new();
+    headers.insert(String::from("content-length1"), String::from("12345"));
+
+    ResponseHeaders(headers)
 }
 
 fn test(request: &Request) -> Html {

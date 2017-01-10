@@ -1,7 +1,7 @@
 use hyper::header::{ContentLength, ContentType};
 use hyper::server::Response;
 use hyper::status::StatusCode;
-use serde_json::{to_vec_pretty, Value};
+use serde_json::{to_value, to_vec_pretty, Map, Value};
 
 pub trait MakeResponse {
     fn len(&self) -> usize {
@@ -82,6 +82,39 @@ impl MakeResponse for Value {
         *response.status_mut() = self.status();
         response.headers_mut().set(self.content_type());
         let body = to_vec_pretty(self).unwrap_or_else(|_| Vec::new());
+        response.send(&body).unwrap();
+    }
+}
+
+pub struct ResponseHeaders(pub Map<String, String>);
+
+impl MakeResponse for ResponseHeaders {
+    fn content_type(&self) -> ContentType {
+        ContentType::json()
+    }
+
+    fn make_response(&self, mut response: Response) {
+        *response.status_mut() = self.status();
+
+        for (name, value) in &self.0 {
+            response.headers_mut().set_raw(name.clone(), vec![value.as_bytes().to_vec()]);
+        }
+        response.headers_mut().set(self.content_type());
+
+        loop {
+            let len1 = to_value(response.headers()).len();
+            response.headers_mut().set(ContentLength(len1 as u64));
+            let len2 = to_value(response.headers()).len();
+
+            // println!("[ResponseHeaders] len1 = {}, len2 = {}", len1, len2);
+
+            if len1 == len2 {
+                break;
+            }
+        }
+
+        let body = to_vec_pretty(response.headers()).unwrap_or_else(|_| Vec::new());
+
         response.send(&body).unwrap();
     }
 }
