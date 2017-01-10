@@ -9,6 +9,8 @@ repository = "https://gitlab.com/imp/httptin.git"
 version = "0.1.0"
 
 [dependencies]
-hyper = "0.9"
-serde = "0.8.21"
-serde_json = "0.8.4"
+serde_json = "0.7"
+
+[dependencies.hyper]
+version = "0.9"
+features = ["serde-serialization"]
