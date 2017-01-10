@@ -4,6 +4,10 @@ use hyper::status::StatusCode;
 use serde_json::{to_vec_pretty, Value};
 
 pub trait MakeResponse {
+    fn len(&self) -> usize {
+        self.content().len()
+    }
+
     fn status(&self) -> StatusCode {
         StatusCode::Ok
     }
@@ -13,7 +17,7 @@ pub trait MakeResponse {
     }
 
     fn content_length(&self) -> ContentLength {
-        ContentLength(0)
+        ContentLength(self.len() as u64)
     }
 
     fn content(&self) -> &[u8] {
@@ -43,7 +47,7 @@ impl MakeResponse for Html {
     }
 
     fn content_length(&self) -> ContentLength {
-        ContentLength(self.0.as_bytes().len() as u64)
+        ContentLength(self.len() as u64)
     }
 
     fn content(&self) -> &[u8] {
@@ -57,7 +61,7 @@ impl MakeResponse for String {
     }
 
     fn content_length(&self) -> ContentLength {
-        ContentLength(self.as_bytes().len() as u64)
+        ContentLength(self.len() as u64)
     }
 
     fn content(&self) -> &[u8] {
@@ -70,7 +74,7 @@ impl MakeResponse for Value {
         ContentType::json()
     }
 
-    fn content_length(&self) -> ContentLength {
+    fn len(&self) -> usize {
         to_vec_pretty(self).unwrap_or_else(|_| Vec::new()).len()
     }
 
