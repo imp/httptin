@@ -57,10 +57,7 @@ fn index() -> Html {
 }
 
 fn status(path: &str) -> StatusCode {
-    // /status/xx
-    // 0123456789
-    let (_, param) = path.split_at(8);
-    match param.parse::<u16>() {
+    match path.trim_left_matches("/status/").parse::<u16>() {
         Ok(status) => StatusCode::from_u16(status),
         Err(_) => StatusCode::BadRequest,
     }
