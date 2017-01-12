@@ -9,6 +9,7 @@ repository = "https://gitlab.com/imp/httptin.git"
 version = "0.1.0"
 
 [dependencies]
+itertools = "0.5"
 serde_json = "0.7"
 
 [dependencies.hyper]
