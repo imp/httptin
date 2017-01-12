@@ -105,9 +105,6 @@ impl MakeResponse for ResponseHeaders {
             let len1 = to_value(response.headers()).len();
             response.headers_mut().set(ContentLength(len1 as u64));
             let len2 = to_value(response.headers()).len();
-
-            // println!("[ResponseHeaders] len1 = {}, len2 = {}", len1, len2);
-
             if len1 == len2 {
                 break;
             }
