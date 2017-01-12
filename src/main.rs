@@ -1,5 +1,6 @@
 #![feature(sockaddr_checker)]
 extern crate hyper;
+extern crate itertools;
 extern crate serde_json;
 
 mod get;

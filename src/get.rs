@@ -1,6 +1,7 @@
 use hyper::server::{Request, Response};
 use hyper::status::StatusCode;
 use hyper::uri::RequestUri;
+use itertools::Itertools;
 use serde_json::{Map, Value};
 
 use makeresponse::{Html, MakeResponse, ResponseHeaders};
@@ -89,8 +90,14 @@ fn headers(request: &Request) -> Value {
 }
 
 fn response_headers(path: &str) -> ResponseHeaders {
-    let mut headers = Map::new();
-    headers.insert(String::from("content-length1"), String::from("12345"));
+    // /response-headers?header1=value&header2=value
+    let headers = path.trim_left_matches("/response-headers")
+        .trim_left_matches('?')
+        .split('&')
+        .map(|i| i.splitn(2, '=').tuples())
+        .flatten()
+        .map(|(i, j)| (String::from(i), String::from(j)))
+        .collect::<Map<_, _>>();
 
     ResponseHeaders(headers)
 }
