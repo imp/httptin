@@ -10,8 +10,8 @@ version = "0.1.0"
 
 [dependencies]
 itertools = "0.5"
-serde_json = "0.7"
+serde_json = "0.8"
+hyper_serde = { git = "https://github.com/imp/hyper_serde.git", branch = "httptin" }
 
 [dependencies.hyper]
-features = ["serde-serialization"]
-version = "0.9"
+version = "0.10"
