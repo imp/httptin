@@ -95,7 +95,9 @@ impl MakeResponse for ResponseHeaders {
     }
 
     fn make_response(&self, mut response: Response) {
-        let pretty = |r: &Response| to_string_pretty(&Ser::new(r.headers())).unwrap_or_else(|_| String::new());
+        let pretty = |r: &Response| {
+            to_string_pretty(&Ser::new(r.headers())).unwrap_or_else(|_| String::new())
+        };
 
         *response.status_mut() = self.status();
 
