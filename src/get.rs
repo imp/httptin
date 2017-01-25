@@ -20,6 +20,7 @@ pub fn handler(request: Request, response: Response) {
             path == "/" => index().make_response(response),
             path == "/ip" => origin(&request).make_response(response),
             path == "/headers" => headers(&request).make_response(response),
+            path.starts_with("/get") => get(&request).make_response(response),
             path.starts_with("/status/") => status(path).make_response(response),
             path.starts_with("/response-headers") => response_headers(path).make_response(response),
             path.starts_with("/test") => test(&request).make_response(response),
@@ -55,6 +56,18 @@ fn index() -> Html {
         <h1>HTTPTIN - HTTP tester in Rust and Rocket</h1>
         </body>
     </html>"))
+}
+
+fn get(request: &Request) -> Value {
+    let mut map = Map::new();
+    let headers = request.headers
+        .iter()
+        .map(|h| (String::from(h.name()), Value::String(h.value_string())))
+        .collect::<Map<_, _>>();
+    map.insert(String::from("headers"), Value::Object(headers));
+    map.insert(String::from("origin"), origin(request));
+
+    Value::Object(map)
 }
 
 fn status(path: &str) -> StatusCode {
