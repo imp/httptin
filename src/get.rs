@@ -12,7 +12,7 @@ macro_rules! dispatch {
     }}
 }
 
-pub fn get(request: Request, response: Response) {
+pub fn handler(request: Request, response: Response) {
     println!("** Handling GET {}", request.uri);
     println!("** Incoming headers {:?}", request.headers);
     if let RequestUri::AbsolutePath(ref path) = request.uri {
