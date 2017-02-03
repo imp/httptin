@@ -1,4 +1,3 @@
-#![feature(sockaddr_checker)]
 extern crate hyper;
 extern crate hyper_serde;
 extern crate itertools;
