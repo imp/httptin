@@ -34,12 +34,6 @@ pub trait MakeResponse {
     }
 }
 
-impl MakeResponse for StatusCode {
-    fn status(&self) -> StatusCode {
-        *self
-    }
-}
-
 pub struct Html(pub String);
 
 impl MakeResponse for Html {

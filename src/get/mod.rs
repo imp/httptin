@@ -1,5 +1,4 @@
 use hyper::server::{Request, Response};
-use hyper::status::StatusCode;
 use hyper::uri::RequestUri;
 use itertools::Itertools;
 use serde_json::{Map, Value};
@@ -8,6 +7,7 @@ use serde_json::to_value;
 use makeresponse::{Html, MakeResponse, ResponseHeaders};
 
 mod headers;
+mod status;
 
 macro_rules! dispatch {
     ($m0:expr => $h0:expr, $($m1:expr => $h1:expr,)*) => {{
@@ -24,7 +24,7 @@ pub fn handler(request: Request, response: Response) {
             path == "/ip" => origin(&request).make_response(response),
             path == "/headers" => headers::headers(&request).make_response(response),
             path.starts_with("/get") => get(&request).make_response(response),
-            path.starts_with("/status/") => status(path).make_response(response),
+            path.starts_with("/status/") => status::status(path).make_response(response),
             path.starts_with("/response-headers") => response_headers(path).make_response(response),
             path.starts_with("/test") => test(&request).make_response(response),
             true => notfound404().make_response(response),
@@ -72,13 +72,6 @@ fn get(request: &Request) -> Value {
     map.insert(String::from("origin"), origin(request));
 
     Value::Object(map)
-}
-
-fn status(path: &str) -> StatusCode {
-    match path.trim_left_matches("/status/").parse::<u16>() {
-        Ok(status) => StatusCode::from_u16(status),
-        Err(_) => StatusCode::BadRequest,
-    }
 }
 
 fn origin(request: &Request) -> Value {
