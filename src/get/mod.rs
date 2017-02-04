@@ -8,6 +8,7 @@ use makeresponse::{Html, MakeResponse, ResponseHeaders};
 
 mod headers;
 mod status;
+mod test;
 
 macro_rules! dispatch {
     ($m0:expr => $h0:expr, $($m1:expr => $h1:expr,)*) => {{
@@ -26,7 +27,7 @@ pub fn handler(request: Request, response: Response) {
             path.starts_with("/get") => get(&request).make_response(response),
             path.starts_with("/status/") => status::status(path).make_response(response),
             path.starts_with("/response-headers") => response_headers(path).make_response(response),
-            path.starts_with("/test") => test(&request).make_response(response),
+            path.starts_with("/test") => test::test(&request).make_response(response),
             true => notfound404().make_response(response),
         ];
     }
@@ -99,25 +100,4 @@ fn response_headers(path: &str) -> ResponseHeaders {
         .collect::<Map<_, _>>();
 
     ResponseHeaders(headers)
-}
-
-fn test(request: &Request) -> Html {
-    Html(format!("<!DOCTYPE html>
-    <html>
-        <head>
-            <title>HTTPTIN TEST</title>
-        </head>
-        <body>
-            Remote Address: {}<br>
-            Method: {}<br>
-            HTTPVersion: {}<br>
-            Headers: {}<br>
-            URI: {}<br>
-        </body>
-    </html>",
-                 request.remote_addr,
-                 request.method,
-                 request.version,
-                 request.headers,
-                 request.uri))
 }
