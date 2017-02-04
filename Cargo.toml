@@ -10,8 +10,11 @@ version = "0.1.0"
 
 [dependencies]
 itertools = "0.5"
-serde_json = "0.8"
-hyper_serde = { git = "https://github.com/imp/hyper_serde.git", branch = "httptin" }
+serde = "0.9"
+serde_derive = "0.9"
+serde_json = "0.9"
+hyper_serde = "0.4"
+#hyper_serde = { git = "https://github.com/imp/hyper_serde.git", branch = "httptin" }
 
 [dependencies.hyper]
-version = "0.10"
+version = "0.9"

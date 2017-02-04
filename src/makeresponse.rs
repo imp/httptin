@@ -2,7 +2,7 @@ use hyper::header::{ContentLength, ContentType};
 use hyper::server::Response;
 use hyper::status::StatusCode;
 use hyper_serde::Ser;
-use serde_json::{to_vec_pretty, to_string_pretty, Map, Value};
+use serde_json::{to_string, to_vec_pretty, to_string_pretty, Map, Value};
 
 pub trait MakeResponse {
     fn len(&self) -> usize {
@@ -87,7 +87,7 @@ impl MakeResponse for Value {
     }
 }
 
-pub struct ResponseHeaders(pub Map<String, String>);
+pub struct ResponseHeaders(pub Map<String, Value>);
 
 impl MakeResponse for ResponseHeaders {
     fn content_type(&self) -> ContentType {
@@ -102,7 +102,7 @@ impl MakeResponse for ResponseHeaders {
         *response.status_mut() = self.status();
 
         for (name, value) in &self.0 {
-            response.headers_mut().set_raw(name.clone(), vec![value.as_bytes().to_vec()]);
+            response.headers_mut().set_raw(name.clone(), vec![to_string(value).unwrap().into_bytes()]);
         }
         response.headers_mut().set(self.content_type());
 

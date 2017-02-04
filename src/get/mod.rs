@@ -3,8 +3,11 @@ use hyper::status::StatusCode;
 use hyper::uri::RequestUri;
 use itertools::Itertools;
 use serde_json::{Map, Value};
+use serde_json::to_value;
 
 use makeresponse::{Html, MakeResponse, ResponseHeaders};
+
+mod headers;
 
 macro_rules! dispatch {
     ($m0:expr => $h0:expr, $($m1:expr => $h1:expr,)*) => {{
@@ -19,7 +22,7 @@ pub fn handler(request: Request, response: Response) {
         dispatch![
             path == "/" => index().make_response(response),
             path == "/ip" => origin(&request).make_response(response),
-            path == "/headers" => headers(&request).make_response(response),
+            path == "/headers" => headers::headers(&request).make_response(response),
             path.starts_with("/get") => get(&request).make_response(response),
             path.starts_with("/status/") => status(path).make_response(response),
             path.starts_with("/response-headers") => response_headers(path).make_response(response),
@@ -64,6 +67,7 @@ fn get(request: &Request) -> Value {
         .iter()
         .map(|h| (String::from(h.name()), Value::String(h.value_string())))
         .collect::<Map<_, _>>();
+    //let headers = serialize_pretty(request.headers).unwrap();
     map.insert(String::from("headers"), Value::Object(headers));
     map.insert(String::from("origin"), origin(request));
 
@@ -91,17 +95,6 @@ fn origin(request: &Request) -> Value {
     Value::Object(map)
 }
 
-fn headers(request: &Request) -> Value {
-    let headers = request.headers
-        .iter()
-        .map(|h| (String::from(h.name()), Value::String(h.value_string())))
-        .collect::<Map<_, _>>();
-    let mut map = Map::new();
-    map.insert(String::from("headers"), Value::Object(headers));
-
-    Value::Object(map)
-}
-
 fn response_headers(path: &str) -> ResponseHeaders {
     // /response-headers?header1=value&header2=value
     let headers = path.trim_left_matches("/response-headers")
@@ -109,7 +102,7 @@ fn response_headers(path: &str) -> ResponseHeaders {
         .split('&')
         .map(|i| i.splitn(2, '=').tuples())
         .flatten()
-        .map(|(i, j)| (String::from(i), String::from(j)))
+        .map(|(i, j)| (String::from(i), to_value(j).unwrap()))
         .collect::<Map<_, _>>();
 
     ResponseHeaders(headers)
