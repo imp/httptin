@@ -1,14 +1,16 @@
 use hyper::server::{Request, Response};
 use hyper::uri::RequestUri;
-use serde_json::{Map, Value};
 
 use makeresponse::{Html, MakeResponse};
 
+mod getdata;
 mod headers;
 mod origin;
 mod status;
 mod responseheaders;
 mod test;
+
+use self::getdata::GetData;
 
 macro_rules! dispatch {
     ($m0:expr => $h0:expr, $($m1:expr => $h1:expr,)*) => {{
@@ -24,7 +26,7 @@ pub fn handler(request: Request, response: Response) {
             path == "/" => index().make_response(response),
             path == "/ip" => origin::origin(&request).make_response(response),
             path == "/headers" => headers::headers(&request).make_response(response),
-            path.starts_with("/get") => get(&request).make_response(response),
+            path.starts_with("/get") => GetData::from(&request).make_response(response),
             path.starts_with("/status/") => status::status(path).make_response(response),
             path.starts_with("/response-headers") => responseheaders::response_headers(path).make_response(response),
             path.starts_with("/test") => test::test(&request).make_response(response),
@@ -60,17 +62,4 @@ fn index() -> Html {
         <h1>HTTPTIN - HTTP tester in Rust and Rocket</h1>
         </body>
     </html>"))
-}
-
-fn get(request: &Request) -> Value {
-    let mut map = Map::new();
-    let headers = request.headers
-        .iter()
-        .map(|h| (String::from(h.name()), Value::String(h.value_string())))
-        .collect::<Map<_, _>>();
-    //let headers = serialize_pretty(request.headers).unwrap();
-    map.insert(String::from("headers"), Value::Object(headers));
-    // map.insert(String::from("origin"), origin(request));
-
-    Value::Object(map)
 }
