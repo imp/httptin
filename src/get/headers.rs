@@ -31,6 +31,16 @@ pub struct HeadersData {
     headers: HashMap<String, String>,
 }
 
+impl HeadersData {
+    pub fn from(request: &Request) -> Self {
+        let headers = request.headers
+            .iter()
+            .map(|h| (h.name().to_string(), h.value_string()))
+            .collect::<HashMap<_, _>>();
+        HeadersData { headers: headers }
+    }
+}
+
 impl MakeResponse for HeadersData {
     fn content_type(&self) -> ContentType {
         ContentType::json()
@@ -46,9 +56,5 @@ impl MakeResponse for HeadersData {
 
 pub fn headers(request: &Request) -> HeadersData {
     // NativeHeadersData { headers: request.headers.clone() }
-    let headers = request.headers
-        .iter()
-        .map(|h| (h.name().to_string(), h.value_string()))
-        .collect::<HashMap<_, _>>();
-    HeadersData { headers: headers }
+    HeadersData::from(request)
 }
