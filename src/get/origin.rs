@@ -14,6 +14,17 @@ pub struct Origin {
     ipv6: bool,
 }
 
+impl Origin {
+    pub fn from(request: &Request) -> Self {
+        Origin {
+            ip: request.remote_addr.ip(),
+            port: request.remote_addr.port(),
+            ipv4: request.remote_addr.is_ipv4(),
+            ipv6: request.remote_addr.is_ipv6(),
+        }
+    }
+}
+
 impl MakeResponse for Origin {
     fn content_type(&self) -> ContentType {
         ContentType::json()
@@ -28,10 +39,5 @@ impl MakeResponse for Origin {
 }
 
 pub fn origin(request: &Request) -> Origin {
-    Origin {
-        ip: request.remote_addr.ip(),
-        port: request.remote_addr.port(),
-        ipv4: request.remote_addr.is_ipv4(),
-        ipv6: request.remote_addr.is_ipv6(),
-    }
+    Origin::from(request)
 }
