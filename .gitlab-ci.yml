@@ -2,7 +2,7 @@ stages:
   - test
   - deploy
 
-stable:
+.stable:
   image: rustdocker/rust:stable
   stage: test
   script:
