@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::convert::From;
 
 use hyper::header::{ContentType, ContentLength, Headers};
 use hyper::server::Response;
@@ -11,8 +10,8 @@ use makeresponse::MakeResponse;
 #[derive(Serialize)]
 pub struct ResponseHeaders(HashMap<String, String>);
 
-impl<'a> From<&'a Headers> for ResponseHeaders {
-    fn from(headers: &Headers) -> Self {
+impl ResponseHeaders {
+    fn from_headers(headers: &Headers) -> Self {
         ResponseHeaders(headers.iter()
             .map(|h| (h.name().to_string(), h.value_string()))
             .collect::<HashMap<_, _>>())
@@ -25,8 +24,8 @@ impl MakeResponse for ResponseHeaders {
     }
 
     fn make_response(&self, mut response: Response) {
-        let pretty = |r: &Response| {
-            to_string_pretty(&ResponseHeaders::from(r.headers())).unwrap_or_else(|_| String::new())
+        let pretty = |h: &Headers| {
+            to_string_pretty(&ResponseHeaders::from_headers(h)).unwrap_or_else(|_| String::new())
         };
 
         *response.status_mut() = self.status();
@@ -37,15 +36,15 @@ impl MakeResponse for ResponseHeaders {
         response.headers_mut().set(self.content_type());
 
         loop {
-            let len1 = pretty(&response).len();
+            let len1 = pretty(response.headers()).len();
             response.headers_mut().set(ContentLength(len1 as u64));
-            let len2 = pretty(&response).len();
+            let len2 = pretty(response.headers()).len();
             if len1 == len2 {
                 break;
             }
         }
 
-        let body = pretty(&response);
+        let body = pretty(response.headers());
 
         response.send(body.as_bytes()).unwrap();
     }

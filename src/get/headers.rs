@@ -27,9 +27,7 @@ impl MakeResponse for NativeHeadersData {
 }
 
 #[derive(Serialize)]
-pub struct HeadersData {
-    headers: HashMap<String, String>,
-}
+pub struct HeadersData(HashMap<String, String>);
 
 impl HeadersData {
     pub fn from(request: &Request) -> Self {
@@ -37,7 +35,7 @@ impl HeadersData {
             .iter()
             .map(|h| (h.name().to_string(), h.value_string()))
             .collect::<HashMap<_, _>>();
-        HeadersData { headers: headers }
+        HeadersData(headers)
     }
 }
 
