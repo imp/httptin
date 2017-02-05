@@ -5,6 +5,7 @@ use serde_json::{Map, Value};
 use makeresponse::{Html, MakeResponse};
 
 mod headers;
+mod origin;
 mod status;
 mod responseheaders;
 mod test;
@@ -21,7 +22,7 @@ pub fn handler(request: Request, response: Response) {
     if let RequestUri::AbsolutePath(ref path) = request.uri {
         dispatch![
             path == "/" => index().make_response(response),
-            path == "/ip" => origin(&request).make_response(response),
+            path == "/ip" => origin::origin(&request).make_response(response),
             path == "/headers" => headers::headers(&request).make_response(response),
             path.starts_with("/get") => get(&request).make_response(response),
             path.starts_with("/status/") => status::status(path).make_response(response),
@@ -69,21 +70,7 @@ fn get(request: &Request) -> Value {
         .collect::<Map<_, _>>();
     //let headers = serialize_pretty(request.headers).unwrap();
     map.insert(String::from("headers"), Value::Object(headers));
-    map.insert(String::from("origin"), origin(request));
-
-    Value::Object(map)
-}
-
-fn origin(request: &Request) -> Value {
-    let mut map = Map::new();
-    let ip = Value::String(format!("{}", request.remote_addr.ip()));
-    let port = Value::String(format!("{}", request.remote_addr.port()));
-    let ipv4 = Value::Bool(request.remote_addr.is_ipv4());
-    let ipv6 = Value::Bool(request.remote_addr.is_ipv6());
-    map.insert(String::from("ip"), ip);
-    map.insert(String::from("port"), port);
-    map.insert(String::from("ipv4"), ipv4);
-    map.insert(String::from("ipv6"), ipv6);
+    // map.insert(String::from("origin"), origin(request));
 
     Value::Object(map)
 }
