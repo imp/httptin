@@ -1,13 +1,12 @@
 use hyper::server::{Request, Response};
 use hyper::uri::RequestUri;
-use itertools::Itertools;
 use serde_json::{Map, Value};
-use serde_json::to_value;
 
-use makeresponse::{Html, MakeResponse, ResponseHeaders};
+use makeresponse::{Html, MakeResponse};
 
 mod headers;
 mod status;
+mod responseheaders;
 mod test;
 
 macro_rules! dispatch {
@@ -26,7 +25,7 @@ pub fn handler(request: Request, response: Response) {
             path == "/headers" => headers::headers(&request).make_response(response),
             path.starts_with("/get") => get(&request).make_response(response),
             path.starts_with("/status/") => status::status(path).make_response(response),
-            path.starts_with("/response-headers") => response_headers(path).make_response(response),
+            path.starts_with("/response-headers") => responseheaders::response_headers(path).make_response(response),
             path.starts_with("/test") => test::test(&request).make_response(response),
             true => notfound404().make_response(response),
         ];
@@ -87,17 +86,4 @@ fn origin(request: &Request) -> Value {
     map.insert(String::from("ipv6"), ipv6);
 
     Value::Object(map)
-}
-
-fn response_headers(path: &str) -> ResponseHeaders {
-    // /response-headers?header1=value&header2=value
-    let headers = path.trim_left_matches("/response-headers")
-        .trim_left_matches('?')
-        .split('&')
-        .map(|i| i.splitn(2, '=').tuples())
-        .flatten()
-        .map(|(i, j)| (String::from(i), to_value(j).unwrap()))
-        .collect::<Map<_, _>>();
-
-    ResponseHeaders(headers)
 }
