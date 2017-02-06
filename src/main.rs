@@ -1,5 +1,4 @@
 extern crate hyper;
-extern crate hyper_serde;
 extern crate itertools;
 #[macro_use]
 extern crate serde_derive;
