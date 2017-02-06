@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use hyper::header::{ContentType, Headers};
+use hyper::header::ContentType;
 use hyper::server::{Request, Response};
 use serde_json::to_string_pretty;
 
@@ -10,7 +10,7 @@ use makeresponse::MakeResponse;
 pub struct HeadersData(HashMap<String, String>);
 
 impl HeadersData {
-    pub fn from(request: &Request) -> Self {
+    pub fn from_request(request: &Request) -> Self {
         let headers = request.headers
             .iter()
             .map(|h| (h.name().to_string(), h.value_string()))
@@ -30,8 +30,4 @@ impl MakeResponse for HeadersData {
         let body = to_string_pretty(self).unwrap_or_else(|_| String::new());
         response.send(body.as_bytes()).unwrap();
     }
-}
-
-pub fn headers(request: &Request) -> HeadersData {
-    HeadersData::from(request)
 }

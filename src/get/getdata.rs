@@ -15,7 +15,7 @@ pub struct GetData {
 impl GetData {
     pub fn from(request: &Request) -> Self {
         GetData {
-            headers: HeadersData::from(request),
+            headers: HeadersData::from_request(request),
             origin: Origin::from(request),
         }
     }
