@@ -12,6 +12,7 @@ mod test;
 
 use self::getdata::GetData;
 use self::headers::HeadersData;
+use self::origin::Origin;
 
 macro_rules! dispatch {
     ($m0:expr => $h0:expr, $($m1:expr => $h1:expr,)*) => {{
@@ -25,7 +26,7 @@ pub fn handler(request: Request, response: Response) {
     if let RequestUri::AbsolutePath(ref path) = request.uri {
         dispatch![
             path == "/" => index().make_response(response),
-            path == "/ip" => origin::origin(&request).make_response(response),
+            path == "/ip" => Origin::from_request(&request).make_response(response),
             path == "/headers" => HeadersData::from_request(&request).make_response(response),
             path.starts_with("/get") => GetData::from(&request).make_response(response),
             path.starts_with("/status/") => status::status(path).make_response(response),

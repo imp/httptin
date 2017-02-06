@@ -15,7 +15,7 @@ pub struct Origin {
 }
 
 impl Origin {
-    pub fn from(request: &Request) -> Self {
+    pub fn from_request(request: &Request) -> Self {
         Origin {
             ip: request.remote_addr.ip(),
             port: request.remote_addr.port(),
@@ -36,8 +36,4 @@ impl MakeResponse for Origin {
         let body = to_string_pretty(self).unwrap_or_else(|_| String::new());
         response.send(body.as_bytes()).unwrap();
     }
-}
-
-pub fn origin(request: &Request) -> Origin {
-    Origin::from(request)
 }
