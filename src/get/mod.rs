@@ -16,8 +16,8 @@ use self::origin::Origin;
 use self::responseheaders::ResponseHeaders;
 
 macro_rules! dispatch {
-    ($m0:expr => $h0:expr, $($m1:expr => $h1:expr,)*) => {{
-        if $m0 { $h0 } $( else if $m1 { $h1 } )*
+    ($r:expr, $m0:expr => $h0:expr, $($m1:expr => $h1:expr,)*) => {{
+        if $m0 { $h0.make_response($r) } $( else if $m1 { $h1.make_response($r) } )*
     }}
 }
 
@@ -26,14 +26,15 @@ pub fn handler(request: Request, response: Response) {
     // println!("** Incoming headers {:?}", request.headers);
     if let RequestUri::AbsolutePath(ref path) = request.uri {
         dispatch![
-            path == "/" => index().make_response(response),
-            path == "/ip" => Origin::from_request(&request).make_response(response),
-            path == "/headers" => HeadersData::from_request(&request).make_response(response),
-            path.starts_with("/get") => GetData::from(&request).make_response(response),
-            path.starts_with("/status/") => status::status(path).make_response(response),
-            path.starts_with("/response-headers") => ResponseHeaders::from_path(path).make_response(response),
-            path.starts_with("/test") => test::test(&request).make_response(response),
-            true => notfound404().make_response(response),
+            response,
+            path == "/" => index(),
+            path == "/ip" => Origin::from_request(&request),
+            path == "/headers" => HeadersData::from_request(&request),
+            path.starts_with("/get") => GetData::from(&request),
+            path.starts_with("/status/") => status::status(path),
+            path.starts_with("/response-headers") => ResponseHeaders::from_path(path),
+            path.starts_with("/test") => test::test(&request),
+            true => notfound404(),
         ];
     }
 }
