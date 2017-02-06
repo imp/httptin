@@ -16,6 +16,19 @@ impl ResponseHeaders {
             .map(|h| (h.name().to_string(), h.value_string()))
             .collect::<HashMap<_, _>>())
     }
+
+    pub fn from_path(path: &str) -> Self {
+        // /response-headers?header1=value&header2=value
+        let headers = path.trim_left_matches("/response-headers")
+            .trim_left_matches('?')
+            .split('&')
+            .map(|i| i.splitn(2, '=').tuples())
+            .flatten()
+            .map(|(i, j)| (i.to_string(), j.to_string()))
+            .collect::<HashMap<_, _>>();
+
+        ResponseHeaders(headers)
+    }
 }
 
 impl MakeResponse for ResponseHeaders {
@@ -48,17 +61,4 @@ impl MakeResponse for ResponseHeaders {
 
         response.send(body.as_bytes()).unwrap();
     }
-}
-
-pub fn response_headers(path: &str) -> ResponseHeaders {
-    // /response-headers?header1=value&header2=value
-    let headers = path.trim_left_matches("/response-headers")
-        .trim_left_matches('?')
-        .split('&')
-        .map(|i| i.splitn(2, '=').tuples())
-        .flatten()
-        .map(|(i, j)| (i.to_string(), j.to_string()))
-        .collect::<HashMap<_, _>>();
-
-    ResponseHeaders(headers)
 }
