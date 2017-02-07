@@ -31,7 +31,6 @@ impl HttpTin {
 
 impl Handler for HttpTin {
     fn handle(&self, request: Request, mut response: Response) {
-        println!("{} {} {}", request.remote_addr, request.method, request.uri);
         self.prepare_response(&mut response);
         match request.method {
             Get => get::handler(request, response),
