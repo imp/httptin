@@ -8,7 +8,7 @@ keywords = ["httpbin", "http", "server", "injection"]
 license = "MIT/Apache-2.0"
 name = "httptin"
 repository = "https://gitlab.com/imp/httptin.git"
-version = "0.1.4"
+version = "0.1.5"
 
 [badges]
 gitlab = { repository = "imp/httptin" }
