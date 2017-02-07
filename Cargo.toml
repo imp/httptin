@@ -15,4 +15,4 @@ serde_derive = "0.9"
 serde_json = "0.9"
 
 [dependencies.hyper]
-version = "0.9"
+version = "0.10"
