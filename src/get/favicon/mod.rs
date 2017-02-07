@@ -1,5 +1,4 @@
 use hyper::header::ContentType;
-use hyper::server::Response;
 
 use makeresponse::MakeResponse;
 
