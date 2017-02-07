@@ -1,6 +1,6 @@
 [package]
 authors = ["Cyril Plisko <cyril.plisko@mountall.com>"]
-categories = ["web-programming:http-server"]
+categories = ["web-programming::http-server"]
 description = "httpbin like utility rewrite in Rust"
 documentation = "https://docs.rs/httptin"
 homepage = "https://gitlab.com/imp/httptin"
