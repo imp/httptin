@@ -11,7 +11,7 @@ repository = "https://gitlab.com/imp/httptin.git"
 version = "0.1.4"
 
 [badges]
-gitlab = { repository = "imp/httpbin" }
+gitlab = { repository = "imp/httptin" }
 
 [dependencies]
 itertools = "0.5"
