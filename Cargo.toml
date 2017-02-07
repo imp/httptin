@@ -6,7 +6,7 @@ keywords = ["httpbin", "http"]
 license = "MIT/Apache-2.0"
 name = "httptin"
 repository = "https://gitlab.com/imp/httptin.git"
-version = "0.1.1"
+version = "0.1.2"
 
 [dependencies]
 itertools = "0.5"
