@@ -3,6 +3,7 @@ use hyper::uri::RequestUri;
 
 use makeresponse::{Html, MakeResponse};
 
+mod favicon;
 mod getdata;
 mod headers;
 mod origin;
@@ -10,6 +11,7 @@ mod status;
 mod responseheaders;
 mod test;
 
+use self::favicon::Favicon;
 use self::getdata::GetData;
 use self::headers::HeadersData;
 use self::origin::Origin;
@@ -30,6 +32,7 @@ pub fn handler(request: Request, response: Response) {
             path == "/" => index(),
             path == "/ip" => Origin::from_request(&request),
             path == "/headers" => HeadersData::from_request(&request),
+            path == "/favicon.ico" => Favicon::default(),
             path.starts_with("/get") => GetData::from(&request),
             path.starts_with("/status/") => status::status(path),
             path.starts_with("/response-headers") => ResponseHeaders::from_path(path),
@@ -57,9 +60,6 @@ fn index() -> Html {
     Html(String::from("<!DOCTYPE html>
     <html>
         <head>
-            <link
-                rel=\"icon\"
-                href=\"http://investorintel.com/wp-content/uploads/2014/03/tin-can.jpg\"/>
             <title>HTTPTIN</title>
         </head>
         <body>
