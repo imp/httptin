@@ -6,6 +6,7 @@ use makeresponse::{Html, MakeResponse};
 mod favicon;
 mod getdata;
 mod headers;
+mod index;
 mod origin;
 mod status;
 mod responseheaders;
@@ -29,7 +30,7 @@ pub fn handler(request: Request, response: Response) {
     if let RequestUri::AbsolutePath(ref path) = request.uri {
         dispatch![
             response,
-            path == "/" => index(),
+            path == "/" => index::index(),
             path == "/ip" => Origin::from_request(&request),
             path == "/headers" => HeadersData::from_request(&request),
             path == "/favicon.ico" => Favicon::default(),
@@ -52,18 +53,6 @@ fn notfound404() -> Html {
         <h1>Not Found</h1>
         <p>The requested URL was not found on the server.
         If you entered the URL manually please check your spelling and try again.</p>
-        </body>
-    </html>"))
-}
-
-fn index() -> Html {
-    Html(String::from("<!DOCTYPE html>
-    <html>
-        <head>
-            <title>HTTPTIN</title>
-        </head>
-        <body>
-        <h1>HTTPTIN - HTTP tester in Rust and Rocket</h1>
         </body>
     </html>"))
 }
