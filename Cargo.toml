@@ -18,6 +18,8 @@ itertools = "0.5"
 serde = "0.9"
 serde_derive = "0.9"
 serde_json = "0.9"
+slog = "1.5"
+slog-term = "1.5"
 
 [dependencies.hyper]
 version = "0.10"

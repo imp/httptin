@@ -1,6 +1,6 @@
 use hyper::server::{Request, Response};
 use hyper::uri::RequestUri;
-
+use slog::Logger;
 use makeresponse::{Html, MakeResponse};
 
 mod favicon;
@@ -24,9 +24,9 @@ macro_rules! dispatch {
     }}
 }
 
-pub fn handler(request: Request, response: Response) {
-    println!("** Handling GET {}", request.uri);
-    // println!("** Incoming headers {:?}", request.headers);
+pub fn handler(logger: Logger, request: Request, response: Response) {
+    info!(logger, "GET {}", request.uri);
+    trace!(logger, "headers {}", request.headers);
     if let RequestUri::AbsolutePath(ref path) = request.uri {
         dispatch![
             response,
