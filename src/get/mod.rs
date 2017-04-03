@@ -3,6 +3,7 @@ use hyper::uri::RequestUri;
 use slog::Logger;
 use makeresponse::{Html, MakeResponse};
 
+mod cookies;
 mod favicon;
 mod getdata;
 mod headers;
@@ -12,6 +13,7 @@ mod status;
 mod responseheaders;
 mod test;
 
+use self::cookies::Cookies;
 use self::favicon::Favicon;
 use self::getdata::GetData;
 use self::headers::HeadersData;
@@ -34,6 +36,7 @@ pub fn handler(logger: Logger, request: Request, response: Response) {
             path == "/ip" => Origin::from_request(&request),
             path == "/headers" => HeadersData::from_request(&request),
             path == "/favicon.ico" => Favicon::default(),
+            path.starts_with("/cookies") => Cookies::from_request(&request),
             path.starts_with("/get") => GetData::from(&request),
             path.starts_with("/status/") => status::status(path),
             path.starts_with("/response-headers") => ResponseHeaders::from_path(path),
