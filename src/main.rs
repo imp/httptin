@@ -1,3 +1,4 @@
+#[macro_use]
 extern crate hyper;
 extern crate itertools;
 #[macro_use]
@@ -6,6 +7,7 @@ extern crate serde_json;
 #[macro_use]
 extern crate slog;
 extern crate slog_term;
+extern crate time;
 
 use hyper::{Get, Post};
 use hyper::header;
@@ -16,6 +18,8 @@ use slog::DrainExt;
 mod get;
 mod post;
 mod makeresponse;
+
+header! { (XHttpTinTiming, "X-HttpTin-Timing") => [header::HttpDate] }
 
 struct HttpTin {
     server: String,
@@ -33,8 +37,10 @@ impl HttpTin {
     }
 
     fn prepare_response(&self, response: &mut Response) {
+        let timestamp = XHttpTinTiming(header::HttpDate(time::now()));
         let server = header::Server(self.server.clone());
         response.headers_mut().set(server);
+        response.headers_mut().set(timestamp);
     }
 }
 
