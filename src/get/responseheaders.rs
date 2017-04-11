@@ -12,9 +12,10 @@ pub struct ResponseHeaders(HashMap<String, String>);
 
 impl ResponseHeaders {
     fn from_headers(headers: &Headers) -> Self {
-        ResponseHeaders(headers.iter()
-            .map(|h| (h.name().to_string(), h.value_string()))
-            .collect::<HashMap<_, _>>())
+        ResponseHeaders(headers
+                            .iter()
+                            .map(|h| (h.name().to_string(), h.value_string()))
+                            .collect::<HashMap<_, _>>())
     }
 
     pub fn from_path(path: &str) -> Self {
@@ -44,7 +45,9 @@ impl MakeResponse for ResponseHeaders {
         *response.status_mut() = self.status();
 
         for (name, value) in &self.0 {
-            response.headers_mut().set_raw(name.clone(), vec![value.clone().into_bytes()]);
+            response
+                .headers_mut()
+                .set_raw(name.clone(), vec![value.clone().into_bytes()]);
         }
         response.headers_mut().set(self.content_type());
 

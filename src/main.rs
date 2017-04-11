@@ -26,7 +26,10 @@ impl HttpTin {
     pub fn new(logger: &slog::Logger) -> Self {
         let server = format!("{}/{}", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"));
         let logger = logger.new(o!("server" => server.clone()));
-        HttpTin { server: server, logger: logger }
+        HttpTin {
+            server: server,
+            logger: logger,
+        }
     }
 
     fn prepare_response(&self, response: &mut Response) {
@@ -37,7 +40,8 @@ impl HttpTin {
 
 impl Handler for HttpTin {
     fn handle(&self, request: Request, mut response: Response) {
-        let logger = self.logger.new(o!("peer" => format!("{}", request.remote_addr)));
+        let logger = self.logger
+            .new(o!("peer" => format!("{}", request.remote_addr)));
         self.prepare_response(&mut response);
         match request.method {
             Get => get::handler(logger, request, response),

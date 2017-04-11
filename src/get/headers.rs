@@ -11,7 +11,8 @@ pub struct HeadersData(HashMap<String, String>);
 
 impl HeadersData {
     pub fn from_request(request: &Request) -> Self {
-        let headers = request.headers
+        let headers = request
+            .headers
             .iter()
             .map(|h| (h.name().to_string(), h.value_string()))
             .collect::<HashMap<_, _>>();
