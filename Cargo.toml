@@ -15,9 +15,9 @@ gitlab = { repository = "imp/httptin" }
 
 [dependencies]
 itertools = "0.6"
-serde = "0.9"
-serde_derive = "0.9"
-serde_json = "0.9"
+serde = "1.0"
+serde_derive = "1.0"
+serde_json = "1.0"
 slog = "1.5"
 slog-term = "1.5"
 
