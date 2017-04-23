@@ -26,21 +26,21 @@ macro_rules! dispatch {
     }}
 }
 
-pub fn handler(logger: Logger, request: Request, response: Response) {
+pub fn handler(logger: Logger, request: &Request, response: Response) {
     info!(logger, "GET {}", request.uri);
     trace!(logger, "headers {}", request.headers);
     if let RequestUri::AbsolutePath(ref path) = request.uri {
         dispatch![
             response,
             path == "/" => index::index(),
-            path == "/ip" => Origin::from_request(&request),
-            path == "/headers" => HeadersData::from_request(&request),
+            path == "/ip" => Origin::from_request(request),
+            path == "/headers" => HeadersData::from_request(request),
             path == "/favicon.ico" => Favicon::default(),
-            path.starts_with("/cookies") => Cookies::from_request(&request),
-            path.starts_with("/get") => GetData::from(&request),
+            path.starts_with("/cookies") => Cookies::from_request(request),
+            path.starts_with("/get") => GetData::from(request),
             path.starts_with("/status/") => status::status(path),
             path.starts_with("/response-headers") => ResponseHeaders::from_path(path),
-            path.starts_with("/test") => test::test(&request),
+            path.starts_with("/test") => test::test(request),
             true => notfound404(),
         ];
     }
