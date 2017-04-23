@@ -18,7 +18,7 @@ impl Cookies {
             .iter()
             .map(|c| c.0.iter())
             .flatten()
-            .map(|s| s.splitn(2, "=").tuples())
+            .map(|s| s.splitn(2, '=').tuples())
             .flatten()
             .map(|(k, v)| (k.to_string(), v.to_string()))
             .collect::<HashMap<_, _>>();
