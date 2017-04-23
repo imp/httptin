@@ -44,8 +44,8 @@ impl Handler for HttpTin {
             .new(o!("peer" => format!("{}", request.remote_addr)));
         self.prepare_response(&mut response);
         match request.method {
-            Get => get::handler(logger, &request, response),
-            Post => post::handler(logger, &request, response),
+            Get => get::handler(&logger, &request, response),
+            Post => post::handler(&logger, &request, response),
             _ => *response.status_mut() = StatusCode::MethodNotAllowed,
         }
     }
