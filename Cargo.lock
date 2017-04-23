@@ -1,6 +1,6 @@
 [root]
 name = "httptin"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "hyper 0.10.9 (registry+https://github.com/rust-lang/crates.io-index)",
  "itertools 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
