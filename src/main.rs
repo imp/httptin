@@ -7,15 +7,15 @@ extern crate serde_json;
 extern crate slog;
 extern crate slog_term;
 
-mod get;
-mod post;
-mod makeresponse;
-
 use hyper::{Get, Post};
 use hyper::header;
 use hyper::server::{Handler, Server, Request, Response};
 use hyper::status::StatusCode;
 use slog::DrainExt;
+
+mod get;
+mod post;
+mod makeresponse;
 
 struct HttpTin {
     server: String,
