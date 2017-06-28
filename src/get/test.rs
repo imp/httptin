@@ -3,7 +3,8 @@ use hyper::server::Request;
 use makeresponse::Html;
 
 pub fn test(request: &Request) -> Html {
-    Html(format!("<!DOCTYPE html>
+    Html(format!(
+        "<!DOCTYPE html>
     <html>
         <head>
             <title>HTTPTIN TEST</title>
@@ -16,9 +17,10 @@ pub fn test(request: &Request) -> Html {
             URI: {}<br>
         </body>
     </html>",
-                 request.remote_addr,
-                 request.method,
-                 request.version,
-                 request.headers,
-                 request.uri))
+        request.remote_addr,
+        request.method,
+        request.version,
+        request.headers,
+        request.uri
+    ))
 }

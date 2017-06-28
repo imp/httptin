@@ -12,10 +12,12 @@ pub struct ResponseHeaders(HashMap<String, String>);
 
 impl ResponseHeaders {
     fn from_headers(headers: &Headers) -> Self {
-        ResponseHeaders(headers
-                            .iter()
-                            .map(|h| (h.name().to_string(), h.value_string()))
-                            .collect::<HashMap<_, _>>())
+        ResponseHeaders(
+            headers
+                .iter()
+                .map(|h| (h.name().to_string(), h.value_string()))
+                .collect::<HashMap<_, _>>(),
+        )
     }
 
     pub fn from_path(path: &str) -> Self {

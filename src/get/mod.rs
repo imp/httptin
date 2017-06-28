@@ -47,7 +47,8 @@ pub fn handler(logger: &Logger, request: &Request, response: Response) {
 }
 
 fn notfound404() -> Html {
-    Html(String::from("<!DOCTYPE html>
+    Html(String::from(
+        "<!DOCTYPE html>
     <html>
         <head>
             <title>404 Not Found</title>
@@ -57,5 +58,6 @@ fn notfound404() -> Html {
         <p>The requested URL was not found on the server.
         If you entered the URL manually please check your spelling and try again.</p>
         </body>
-    </html>"))
+    </html>",
+    ))
 }
