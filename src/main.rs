@@ -10,7 +10,7 @@ extern crate slog_term;
 use hyper::{Get, Post};
 use hyper::header;
 use hyper::server::{Handler, Server, Request, Response};
-use hyper::status::StatusCode;
+use hyper::StatusCode;
 use slog::DrainExt;
 
 mod get;

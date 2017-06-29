@@ -1,6 +1,6 @@
 use hyper::header::{ContentLength, ContentType};
 use hyper::server::Response;
-use hyper::status::StatusCode;
+use hyper::StatusCode;
 
 pub trait MakeResponse {
     fn len(&self) -> usize {

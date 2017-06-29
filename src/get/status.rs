@@ -1,4 +1,4 @@
-use hyper::status::StatusCode;
+use hyper::StatusCode;
 
 use makeresponse::MakeResponse;
 
