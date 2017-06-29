@@ -1,6 +1,7 @@
 use hyper::server::{Request, Response};
-use hyper::uri::RequestUri;
+use hyper::Uri;
 use slog::Logger;
+
 use makeresponse::{Html, MakeResponse};
 
 mod cookies;
@@ -29,7 +30,7 @@ macro_rules! dispatch {
 pub fn handler(logger: &Logger, request: &Request, response: Response) {
     info!(logger, "GET {}", request.uri);
     trace!(logger, "headers {}", request.headers);
-    if let RequestUri::AbsolutePath(ref path) = request.uri {
+    if let Uri::AbsolutePath(ref path) = request.uri {
         dispatch![
             response,
             path == "/" => index::index(),
