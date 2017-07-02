@@ -44,7 +44,7 @@ impl MakeResponse for ResponseHeaders {
             to_string_pretty(&ResponseHeaders::from_headers(h)).unwrap_or_else(|_| String::new())
         };
 
-        *response.status_mut() = self.status();
+        response.set_status(self.status());
 
         for (name, value) in &self.0 {
             response

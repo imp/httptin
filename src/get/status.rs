@@ -1,4 +1,5 @@
 use hyper::StatusCode;
+use hyper::status::InvalidStatusCode;
 
 use makeresponse::MakeResponse;
 
@@ -9,8 +10,9 @@ impl MakeResponse for StatusCode {
 }
 
 pub fn status(path: &str) -> StatusCode {
-    match path.trim_left_matches("/status/").parse::<u16>() {
-        Ok(status) => StatusCode::from_u16(status),
-        Err(_) => StatusCode::BadRequest,
-    }
+    path.trim_left_matches("/status")
+        .parse::<u16>()
+        .map_err(|_| InvalidStatusCode)
+        .and_then(|c| StatusCode::try_from(c))
+        .unwrap_or(StatusCode::BadRequest)
 }

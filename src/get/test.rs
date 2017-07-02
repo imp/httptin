@@ -17,10 +17,10 @@ pub fn test(request: &Request) -> Html {
             URI: {}<br>
         </body>
     </html>",
-        request.remote_addr,
-        request.method,
-        request.version,
-        request.headers,
-        request.uri
+        request.remote_addr().unwrap(),
+        request.method(),
+        request.version(),
+        request.headers(),
+        request.uri()
     ))
 }

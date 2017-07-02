@@ -16,11 +16,12 @@ pub struct Origin {
 
 impl Origin {
     pub fn from_request(request: &Request) -> Self {
+        let addr = request.remote_addr().unwrap();
         Origin {
-            ip: request.remote_addr.ip(),
-            port: request.remote_addr.port(),
-            ipv4: request.remote_addr.is_ipv4(),
-            ipv6: request.remote_addr.is_ipv6(),
+            ip: addr.ip(),
+            port: addr.port(),
+            ipv4: addr.is_ipv4(),
+            ipv6: addr.is_ipv6(),
         }
     }
 }
@@ -31,7 +32,7 @@ impl MakeResponse for Origin {
     }
 
     fn make_response(&self, mut response: Response) {
-        *response.status_mut() = self.status();
+        response.set_status(self.status());
         response.headers_mut().set(self.content_type());
         let body = to_string_pretty(self).unwrap_or_else(|_| String::new());
         response.send(body.as_bytes()).unwrap();

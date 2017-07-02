@@ -24,9 +24,9 @@ pub trait MakeResponse {
     }
 
     fn make_response(&self, mut response: Response) {
-        *response.status_mut() = self.status();
+        response.set_status(self.status());
         response.headers_mut().set(self.content_type());
-        response.send(self.content()).unwrap();
+        response.set_body(self.content());
         // response.headers_mut().set(self.content_length());
         // response.start().unwrap().write(self.content()).unwrap();
     }

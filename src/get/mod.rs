@@ -28,9 +28,9 @@ macro_rules! dispatch {
 }
 
 pub fn handler(logger: &Logger, request: &Request, response: Response) {
-    info!(logger, "GET {}", request.uri);
-    trace!(logger, "headers {}", request.headers);
-    if let Uri::AbsolutePath(ref path) = request.uri {
+    info!(logger, "GET {}", request.uri());
+    trace!(logger, "headers {}", request.headers());
+    if let Uri::AbsolutePath(ref path) = request.uri() {
         dispatch![
             response,
             path == "/" => index::index(),

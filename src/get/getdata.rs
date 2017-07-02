@@ -29,7 +29,7 @@ impl MakeResponse for GetData {
     }
 
     fn make_response(&self, mut response: Response) {
-        *response.status_mut() = self.status();
+        response.set_status(self.status());
         response.headers_mut().set(self.content_type());
         let body = to_string_pretty(self).unwrap_or_else(|_| String::new());
         response.send(body.as_bytes()).unwrap();

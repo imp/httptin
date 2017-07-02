@@ -12,7 +12,7 @@ pub struct HeadersData(HashMap<String, String>);
 impl HeadersData {
     pub fn from_request(request: &Request) -> Self {
         let headers = request
-            .headers
+            .headers()
             .iter()
             .map(|h| (h.name().to_string(), h.value_string()))
             .collect::<HashMap<_, _>>();
@@ -26,7 +26,7 @@ impl MakeResponse for HeadersData {
     }
 
     fn make_response(&self, mut response: Response) {
-        *response.status_mut() = self.status();
+        response.set_status(self.status());
         response.headers_mut().set(self.content_type());
         let body = to_string_pretty(self).unwrap_or_else(|_| String::new());
         response.send(body.as_bytes()).unwrap();

@@ -1,3 +1,4 @@
+extern crate futures;
 extern crate hyper;
 extern crate itertools;
 #[macro_use]
@@ -7,9 +8,10 @@ extern crate serde_json;
 extern crate slog;
 extern crate slog_term;
 
+use futures::future;
 use hyper::{Get, Post};
 use hyper::header;
-use hyper::server::{Handler, Server, Request, Response};
+use hyper::server::{Http, Request, Response, Service};
 use hyper::StatusCode;
 use slog::DrainExt;
 
@@ -32,21 +34,28 @@ impl HttpTin {
         }
     }
 
-    fn prepare_response(&self, response: &mut Response) {
+    fn prepare_response(&self) -> Response {
+        let mut response = Response::new();
         let server = header::Server(self.server.clone());
         response.headers_mut().set(server);
+        response
     }
 }
 
-impl Handler for HttpTin {
-    fn handle(&self, request: Request, mut response: Response) {
+impl Service for HttpTin {
+    type Request = Request;
+    type Response = Response;
+    type Error = hyper::Error;
+    type Future = future::FutureResult<Self::Response, Self::Error>;
+
+    fn call(&self, request: Request) -> Self::Future {
         let logger = self.logger
-            .new(o!("peer" => format!("{}", request.remote_addr)));
-        self.prepare_response(&mut response);
-        match request.method {
+            .new(o!("peer" => format!("{}", request.remote_addr().unwrap())));
+        let mut response = self.prepare_response();
+        match *request.method() {
             Get => get::handler(&logger, &request, response),
             Post => post::handler(&logger, &request, response),
-            _ => *response.status_mut() = StatusCode::MethodNotAllowed,
+            _ => response.set_status(StatusCode::MethodNotAllowed),
         }
     }
 }
@@ -55,8 +64,14 @@ fn main() {
     let drain = slog_term::streamer().compact().build().fuse();
     let logger = slog::Logger::root(drain, o!());
     let httptin = HttpTin::new(&logger);
-    let server = Server::http("localhost:8000").unwrap();
-    if let Ok(active) = server.handle(httptin) {
+    let addr = "localhost::8000".parse().unwrap();
+    let server = Http::new().bind(&addr, || Ok(httptin)).unwrap();
+    if let Ok(active) = server.run() {
         info!(logger, "{:?}", active);
     }
+
+    // let server = Server::http("localhost:8000").unwrap();
+    // if let Ok(active) = server.handle(httptin) {
+    //     info!(logger, "{:?}", active);
+    // }
 }
